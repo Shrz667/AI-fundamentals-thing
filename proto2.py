@@ -1,298 +1,298 @@
-import tkinter as tk
-import random
-import heapq
+# import tkinter as tk
+# import random
+# import heapq
 
-# Etat final du jeu
-objectif = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+# # Etat final du jeu
+# objectif = (1, 2, 3, 4, 5, 6, 7, 8, 0)
 
-# Etat de depart
-jeu = list(objectif)
-coups = 0
-en_cours = False
+# # Etat de depart
+# jeu = list(objectif)
+# coups = 0
+# en_cours = False
 
-# Creer la fenetre
-fenetre = tk.Tk()
-fenetre.title("Jeu de Taquin avec A*")
-fenetre.geometry("400x550")
-fenetre.resizable(False, False)
+# # Creer la fenetre
+# fenetre = tk.Tk()
+# fenetre.title("Jeu de Taquin avec A*")
+# fenetre.geometry("400x550")
+# fenetre.resizable(False, False)
 
-# Titre
-titre = tk.Label(
-    fenetre,
-    text="JEU DE TAQUIN",
-    font=("Arial", 20, "bold")
-)
-titre.pack(pady=10)
+# # Titre
+# titre = tk.Label(
+#     fenetre,
+#     text="JEU DE TAQUIN",
+#     font=("Arial", 20, "bold")
+# )
+# titre.pack(pady=10)
 
-# Compteur de coups
-info = tk.Label(fenetre, text="Coups : 0",
-                font=("Arial", 12))
-info.pack()
+# # Compteur de coups
+# info = tk.Label(fenetre, text="Coups : 0",
+#                 font=("Arial", 12))
+# info.pack()
 
-# Plateau
-plateau = tk.Frame(fenetre)
-plateau.pack(pady=10)
+# # Plateau
+# plateau = tk.Frame(fenetre)
+# plateau.pack(pady=10)
 
-# Message
-message = tk.Label(fenetre, text="Melange le jeu !",
-                   font=("Arial", 11))
-message.pack(pady=5)
+# # Message
+# message = tk.Label(fenetre, text="Melange le jeu !",
+#                    font=("Arial", 11))
+# message.pack(pady=5)
 
-# Liste des boutons
-boutons = []
+# # Liste des boutons
+# boutons = []
 
 
-# Calculer la distance de Manhattan
-def heuristique(etat):
-    distance = 0
+# # Calculer la distance de Manhattan
+# def heuristique(etat):
+#     distance = 0
 
-    for i in range(9):
-        nombre = etat[i]
+#     for i in range(9):
+#         nombre = etat[i]
 
-        if nombre != 0:
-            position_finale = nombre - 1
+#         if nombre != 0:
+#             position_finale = nombre - 1
 
-            ligne = i // 3
-            colonne = i % 3
+#             ligne = i // 3
+#             colonne = i % 3
 
-            ligne_finale = position_finale // 3
-            colonne_finale = position_finale % 3
+#             ligne_finale = position_finale // 3
+#             colonne_finale = position_finale % 3
 
-            distance = distance + abs(ligne - ligne_finale)
-            distance = distance + abs(colonne - colonne_finale)
+#             distance = distance + abs(ligne - ligne_finale)
+#             distance = distance + abs(colonne - colonne_finale)
 
-    return distance
+#     return distance
 
 
-# Trouver les etats voisins
-def voisins(etat):
-    resultat = []
+# # Trouver les etats voisins
+# def voisins(etat):
+#     resultat = []
 
-    vide = etat.index(0)
+#     vide = etat.index(0)
 
-    positions = []
+#     positions = []
 
-    if vide % 3 > 0:
-        positions.append(vide - 1)
+#     if vide % 3 > 0:
+#         positions.append(vide - 1)
 
-    if vide % 3 < 2:
-        positions.append(vide + 1)
+#     if vide % 3 < 2:
+#         positions.append(vide + 1)
 
-    if vide // 3 > 0:
-        positions.append(vide - 3)
+#     if vide // 3 > 0:
+#         positions.append(vide - 3)
 
-    if vide // 3 < 2:
-        positions.append(vide + 3)
+#     if vide // 3 < 2:
+#         positions.append(vide + 3)
 
-    for position in positions:
-        nouveau = list(etat)
+#     for position in positions:
+#         nouveau = list(etat)
 
-        nouveau[vide] = nouveau[position]
-        nouveau[position] = 0
+#         nouveau[vide] = nouveau[position]
+#         nouveau[position] = 0
 
-        resultat.append(tuple(nouveau))
+#         resultat.append(tuple(nouveau))
 
-    return resultat
+#     return resultat
 
 
-# Algorithme A*
-def a_etoile(depart):
+# # Algorithme A*
+# def a_etoile(depart):
 
-    liste_ouverte = []
-    heapq.heappush(
-        liste_ouverte,
-        (heuristique(depart), 0, depart)
-    )
+#     liste_ouverte = []
+#     heapq.heappush(
+#         liste_ouverte,
+#         (heuristique(depart), 0, depart)
+#     )
 
-    parents = {}
-    couts = {depart: 0}
+#     parents = {}
+#     couts = {depart: 0}
 
-    while liste_ouverte:
+#     while liste_ouverte:
 
-        f, g, courant = heapq.heappop(liste_ouverte)
+#         f, g, courant = heapq.heappop(liste_ouverte)
 
-        if g != couts[courant]:
-            continue
+#         if g != couts[courant]:
+#             continue
 
-        # Si on trouve la solution
-        if courant == objectif:
+#         # Si on trouve la solution
+#         if courant == objectif:
 
-            chemin = [courant]
+#             chemin = [courant]
 
-            while courant in parents:
-                courant = parents[courant]
-                chemin.append(courant)
+#             while courant in parents:
+#                 courant = parents[courant]
+#                 chemin.append(courant)
 
-            chemin.reverse()
-            return chemin
+#             chemin.reverse()
+#             return chemin
 
-        # Examiner les voisins
-        for voisin in voisins(courant):
+#         # Examiner les voisins
+#         for voisin in voisins(courant):
 
-            nouveau_cout = g + 1
+#             nouveau_cout = g + 1
 
-            if voisin not in couts or nouveau_cout < couts[voisin]:
+#             if voisin not in couts or nouveau_cout < couts[voisin]:
 
-                couts[voisin] = nouveau_cout
-                parents[voisin] = courant
+#                 couts[voisin] = nouveau_cout
+#                 parents[voisin] = courant
 
-                f = nouveau_cout + heuristique(voisin)
+#                 f = nouveau_cout + heuristique(voisin)
 
-                heapq.heappush(
-                    liste_ouverte,
-                    (f, nouveau_cout, voisin)
-                )
+#                 heapq.heappush(
+#                     liste_ouverte,
+#                     (f, nouveau_cout, voisin)
+#                 )
 
-    return []
+#     return []
 
 
-# Afficher le plateau
-def afficher():
-    for i in range(9):
+# # Afficher le plateau
+# def afficher():
+#     for i in range(9):
 
-        if jeu[i] == 0:
-            boutons[i].config(
-                text="",
-                bg="white"
-            )
-        else:
-            boutons[i].config(
-                text=str(jeu[i]),
-                bg="lightblue"
-            )
+#         if jeu[i] == 0:
+#             boutons[i].config(
+#                 text="",
+#                 bg="white"
+#             )
+#         else:
+#             boutons[i].config(
+#                 text=str(jeu[i]),
+#                 bg="lightblue"
+#             )
 
 
-# Deplacer une case
-def deplacer(position):
+# # Deplacer une case
+# def deplacer(position):
 
-    global coups
+#     global coups
 
-    if en_cours:
-        return
+#     if en_cours:
+#         return
 
-    vide = jeu.index(0)
+#     vide = jeu.index(0)
 
-    if (position // 3 == vide // 3
-            and abs(position - vide) == 1) or abs(position - vide) == 3:
+#     if (position // 3 == vide // 3
+#             and abs(position - vide) == 1) or abs(position - vide) == 3:
 
-        jeu[vide] = jeu[position]
-        jeu[position] = 0
+#         jeu[vide] = jeu[position]
+#         jeu[position] = 0
 
-        coups = coups + 1
-        info.config(text="Coups : " + str(coups))
+#         coups = coups + 1
+#         info.config(text="Coups : " + str(coups))
 
-        afficher()
+#         afficher()
 
-        if tuple(jeu) == objectif:
-            message.config(text="Bravo ! Tu as gagne !")
+#         if tuple(jeu) == objectif:
+#             message.config(text="Bravo ! Tu as gagne !")
 
 
-# Melanger le jeu
-def melanger():
+# # Melanger le jeu
+# def melanger():
 
-    global coups
+#     global coups
 
-    if en_cours:
-        return
+#     if en_cours:
+#         return
 
-    jeu[:] = objectif
+#     jeu[:] = objectif
 
-    # Faire 20 deplacements aleatoires
-    for i in range(20):
+#     # Faire 20 deplacements aleatoires
+#     for i in range(20):
 
-        vide = jeu.index(0)
-        liste = voisins(tuple(jeu))
-        choix = random.choice(liste)
+#         vide = jeu.index(0)
+#         liste = voisins(tuple(jeu))
+#         choix = random.choice(liste)
 
-        jeu[:] = choix
+#         jeu[:] = choix
 
-    coups = 0
-    info.config(text="Coups : 0")
-    message.config(text="Trouve la solution !")
+#     coups = 0
+#     info.config(text="Coups : 0")
+#     message.config(text="Trouve la solution !")
 
-    afficher()
+#     afficher()
 
-#resoudre le jeu 
+# #resoudre le jeu 
 
-def resoudre():
+# def resoudre():
 
-    global en_cours, coups
+#     global en_cours, coups
 
-    if en_cours:
-        return
+#     if en_cours:
+#         return
 
-    en_cours = True
+#     en_cours = True
 
-    boutons_melanger.config(state="disabled")
-    bouton_a.config(state="disabled")
+#     boutons_melanger.config(state="disabled")
+#     bouton_a.config(state="disabled")
 
-    message.config(text="Recherche de la solution...")
-    fenetre.update()
+#     message.config(text="Recherche de la solution...")
+#     fenetre.update()
 
-    depart = tuple(jeu)
+#     depart = tuple(jeu)
 
-    chemin = a_etoile(depart)
+#     chemin = a_etoile(depart)
 
-    if chemin:
-        jeu[:] = chemin[-1]
+#     if chemin:
+#         jeu[:] = chemin[-1]
 
-        coups = len(chemin) - 1
+#         coups = len(chemin) - 1
 
-        info.config(text="Coups : " + str(coups))
+#         info.config(text="Coups : " + str(coups))
 
-        afficher()
+#         afficher()
 
-        message.config(text="Solution trouvee avec A* !")
+#         message.config(text="Solution trouvee avec A* !")
 
-    else:
-        message.config(text="Aucune solution trouvee !")
+#     else:
+#         message.config(text="Aucune solution trouvee !")
 
-    en_cours = False
+#     en_cours = False
 
-    boutons_melanger.config(state="normal")
-    bouton_a.config(state="normal")
+#     boutons_melanger.config(state="normal")
+#     bouton_a.config(state="normal")
 
 
-# Creer les 9 boutons
-for i in range(9):
+# # Creer les 9 boutons
+# for i in range(9):
 
-    bouton = tk.Button(
-        plateau,
-        text=str(jeu[i]),
-        font=("Arial", 20, "bold"),
-        width=4,
-        height=2,
-        command=lambda i=i: deplacer(i)
-    )
+#     bouton = tk.Button(
+#         plateau,
+#         text=str(jeu[i]),
+#         font=("Arial", 20, "bold"),
+#         width=4,
+#         height=2,
+#         command=lambda i=i: deplacer(i)
+#     )
 
-    bouton.grid(
-        row=i // 3,
-        column=i % 3,
-        padx=3,
-        pady=3
-    )
+#     bouton.grid(
+#         row=i // 3,
+#         column=i % 3,
+#         padx=3,
+#         pady=3
+#     )
 
-    boutons.append(bouton)
+#     boutons.append(bouton)
 
 
-# Bouton melanger
-boutons_melanger = tk.Button(
-    fenetre,
-    text="Melanger",
-    font=("Arial", 11),
-    command=melanger
-)
-boutons_melanger.pack(pady=5)
+# # Bouton melanger
+# boutons_melanger = tk.Button(
+#     fenetre,
+#     text="Melanger",
+#     font=("Arial", 11),
+#     command=melanger
+# )
+# boutons_melanger.pack(pady=5)
 
-# Bouton A*
-bouton_a = tk.Button(
-    fenetre,
-    text="Resoudre avec A*",
-    font=("Arial", 11, "bold"),
-    command=resoudre
-)
-bouton_a.pack(pady=5)
+# # Bouton A*
+# bouton_a = tk.Button(
+#     fenetre,
+#     text="Resoudre avec A*",
+#     font=("Arial", 11, "bold"),
+#     command=resoudre
+# )
+# bouton_a.pack(pady=5)
 
-# Afficher le jeu et lancer la fenetre
-afficher()
-fenetre.mainloop()
+# # Afficher le jeu et lancer la fenetre
+# afficher()
+# fenetre.mainloop()
