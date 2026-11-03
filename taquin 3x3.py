@@ -13,6 +13,8 @@ shema=[
     [7, 6, 5],
 ]
 
+
+# /////////////////////////////////////////////////////////////////////////////////////
 x= tk.Frame(fenetre)
 # bar= tk.Scrollbar(x)
 # bar.pack(side="right", fill="y")
@@ -42,34 +44,38 @@ def etat_actuel():
     return tuple(liste)
 
 
-def afficher(etat, titre):                    
-    ecrire(titre)                              
-    for i in range(0, 9, 3):                  
-        ligne = ["_" if v == 0 else str(v) for v in etat[i:i+3]]  
-        ecrire("[" + ", ".join(ligne) + "]")   # Ex : [8, _, 4]
-    ecrire("") 
+def afficher(etat, titre, g):
+    h = heuristique(etat)
+    f = g + h
+    ecrire(titre)
+    for i in range(0, 9, 3):
+        ligne = ["_" if v == 0 else str(v) for v in etat[i:i+3]]
+        ecrire("[" + ", ".join(ligne) + "]")
+    ecrire("g = " + str(g) + "  h = " + str(h) + "  f = " + str(f))
+    ecrire("")
+         
 
 but = tuple(0 if v is None else v      
             for ligne in shema         
             for v in ligne)            
                                        
 
-
+# depalcement manh
 def heuristique(etat):                         
-    total = 0                                 
+    total = 0                  #aucun depladement aka initial               
     for pos, v in enumerate(etat):           
-        if v != 0:                             
-            p = but.index(v)                  
-            total += abs(pos // 3 - p // 3) + abs(pos % 3 - p % 3) 
-    return total
+        if v != 0:                   # si la case n est pas vide           
+            p = but.index(v)           # sa position 1ere f shema       
+            total += abs(pos // 3 - p // 3) + abs(pos % 3 - p % 3)  #diff entre ligne et col li rana fihom et celle wanted
+    return total # retourne le f aka coup ttl
 
 
 
 def voisins(etat):                             
     v = etat.index(0)                          
-    l, c = divmod(v, 3)                        
+    l, c = divmod(v, 3)                        # les getters den index vides
     resultat = []                            
-    for dl, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):   
+    for dl, dc in ((-1, 0), (1, 0), (0, -1), (0, 1)):   # mouvements
         nl, nc = l + dl, c + dc               
         if 0 <= nl < 3 and 0 <= nc < 3:       
             n = nl * 3 + nc                    
@@ -79,18 +85,18 @@ def voisins(etat):
     return resultat
 
 def astar(depart):                            
-    file = [(heuristique(depart), 0, depart)]  
-    parent = {depart: None}                  
-    cout = {depart: 0}                         
+    file = [(heuristique(depart), 0, depart)]  # priorite sur qu elle choisir
+    parent = {depart: None}                  # mnin jina 
+    cout = {depart: 0}                       # meilleur option   
     while file:                                
-        f, g, etat = heapq.heappop(file)      
+        f, g, etat = heapq.heappop(file)      # etats plus petit de f 
         if etat == but:                       
             chemin = []                        
             while etat is not None:
                 chemin.append(etat)
                 etat = parent[etat]
             return chemin[::-1]               
-        if g > cout[etat]:                     
+        if g > cout[etat]:                  # si on trouve mieux    
             continue
         for v in voisins(etat):                
             if v not in cout or g + 1 < cout[v]:  
@@ -105,9 +111,9 @@ def lancer_astar():
     if chemin is None:                         
         ecrire("Aucune solution")
         return
-    afficher(chemin[0], "État initial (mélangé)")      
+    afficher(chemin[0], "État initial (mélangé)",0)      
     for i, etat in enumerate(chemin[1:], start=1):    
-        afficher(etat, "Coup " + str(i))
+        afficher(etat, "Coup " + str(i),i)
     ecrire("Terminé en " + str(len(chemin) - 1) + " coups")
  
 
