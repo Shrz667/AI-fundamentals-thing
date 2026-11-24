@@ -17,7 +17,7 @@ cercles = [[None for _ in range(7)] for _ in range(6)]
 
              
 
-
+#gygyvjgv
 def afficher_plateau():
     global canvas
     canvas = tk.Canvas(window, width=630, height=540, bg="#365E7D", highlightthickness=0)
@@ -42,10 +42,10 @@ def lancerhvb():
     x.pack_forget()
     afficher_plateau()
 
-def colonnes_libres():
+def colonnes_libres(): # in col 1st libre
      return [j for j in range(7) if grille[0][j] is None]    
 
-def ligne_libre(j):
+def ligne_libre(j): # in l frst libre
      for i in range(5, -1, -1):
          if grille[i][j] is None:
              return i
@@ -53,22 +53,22 @@ def ligne_libre(j):
 
 
 def tester(j, lettre):
-     # il pose f la case a joiuer mais without output just to see
+     # il pose f la case a joiuer la lettre tae LE joueur J w yychouf ile c valide mais without output just to see
      i = ligne_libre(j)
-     grille[i][j] = lettre
+     grille[i][j] = lettre # hna ydjib la lettre li f la griile 
      gagne = gagnant() is not None
      grille[i][j] = None
-     return gagne
+     return gagne # hna retour bouleain 
  
  
 
 
 
 def choix_bot():
-    ordre = [3, 2, 4, 1, 5, 0, 6]     # hna its thing abt the center thing               
+    ordre = [3, 2, 4, 1, 5, 0, 6]     # hna its thing abt the center poids thing               
     libres = colonnes_libres()
 
-    # if its valid in one move je joue
+    # if its valid in one move je joue la col
     for j in ordre:
         if j in libres and tester(j, "J"):
             return j
@@ -83,22 +83,23 @@ def choix_bot():
     for j in ordre:
         if j in colonnes_libres():
             i = ligne_libre(j)
-            grille[i][j] = "R"                     
-            menaces = 0 #ida laeb hna sema mshi hadja
+            grille[i][j] = "R"   # je teste possinbilite de victoir du h         
+            menaces = 0 # var menace initiale
             for k in colonnes_libres():
                 if tester(k, "R"):
+                    # menace ++ a chaque fois q un chemain de vicroire s ouvre 
                     menaces += 1     # mais la non faut bloquer coute que coute                
             grille[i][j] = None                  
             if menaces >= 2:
-                return j          
+                return j   # ida il a 2 posibilite de win ou plus je bloque       
             
     # je privilegie centyre sauf si blokani
     for j in ordre:
         if j in libres:
             i = ligne_libre(j)
             grille[i][j] = "J"                       
-            danger = i > 0 and tester(j, "R")        
-            grille[i][j] = None                   
+            danger = i > 0 and tester(j, "R")   # si je place ici esq l red yerbah      
+            grille[i][j] = None          #ida oui nelaeb f next vide ida non sema hia          
             if not danger:
                 return j
 
@@ -150,7 +151,7 @@ def jouer(event):
 def poser(j):
     global joueur
     for i in range(5, -1, -1):
-        if grille[i][j] is None:
+        if grille[i][j] is None: # hna il place dans la premierce case vide 
             if joueur == 1:
                 lettre = "R"
                 player="Rouge"
@@ -159,10 +160,10 @@ def poser(j):
                 lettre = "J"
                 player="Jaune"
                 couleur = "#E8C878"
-
+# hna y marki f la grille le jeton poser selon l player 
             grille[i][j] = lettre
             canvas.itemconfig(cercles[i][j], fill=couleur)
-
+ # hna pour verfifier si yas gagnat
             if gagnant() is not None:
                 canvas.unbind("<Button-1>")
                 canvas.create_text(315, 270, text=player + " gagne !",
@@ -172,6 +173,7 @@ def poser(j):
                 canvas.create_text(315, 270, text="Match nul",
                                    fill=couleur, font=("Goldman", 40))
             else:
+                # partie continue selon le tour 
                 joueur = 2 if joueur == 1 else 1
                 if mode == "hvb" and joueur == 2:
                     window.after(500, lambda: poser(choix_bot()))
