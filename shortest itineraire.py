@@ -42,6 +42,11 @@ def afficher_trajet(tournee):
     cumul += d
     print(f"{tournee[0].nom:<20} cumul = {cumul:8.1f} km  (retour)")
 
+def voisin(tournee):
+    i, j = random.sample(range(1, len(tournee)), 2)
+    nouvelle = tournee[:]            # copie, pour ne pas modifier l'originale
+    nouvelle[i], nouvelle[j] = nouvelle[j], nouvelle[i]
+    return nouvelle
 
 def tournee():
     autres = [v for v in villes if v is not depart]
@@ -62,14 +67,31 @@ def recherche_aleatoire():
             meilleure, meilleur_cout = t, c
             return meilleure, meilleur_cout
 
-#pour voir si ca maeche  
+#pour voir si ca maeche
+print ("meth recherche_aleatoire")  
 t,c= recherche_aleatoire()
 afficher_trajet(t)
 
 
 
-def recherche_local():
- pass 
+def recherche_local(nb_iter):
+    courante = tournee()
+    cout_courante = cout(courante)
+    essais = 0
+    while essais < nb_iter:
+        cand = voisin(courante)
+        c = cout(cand)
+        if c < cout_courante:
+            courante, cout_courante = cand, c
+            essais = 0               # on a progressé, on repart à zéro
+        else:
+            essais += 1
+        return courante, cout_courante
+
+print ("meth recherche local")
+t2,c2= recherche_local(20)
+afficher_trajet(t2)
+
 
 
 def hill_climbing():
